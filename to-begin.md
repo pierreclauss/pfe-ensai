@@ -53,7 +53,7 @@ library(tidyquant)
 ))
 ```
 
-    ## # A tibble: 8,957 Ã 8
+    ## # A tibble: 8,957 × 8
     ##    symbol date        open  high   low close volume adjusted
     ##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>  <dbl>    <dbl>
     ##  1 ^FCHI  1990-03-01  1836  1838  1827  1832      0     1832
@@ -66,13 +66,13 @@ library(tidyquant)
     ##  8 ^FCHI  1990-03-12  1917  1918  1912  1912      0     1912
     ##  9 ^FCHI  1990-03-13  1924  1924  1924  1924      0     1924
     ## 10 ^FCHI  1990-03-14  1919  1946  1919  1946      0     1946
-    ## # â¹ 8,947 more rows
+    ## # ℹ 8,947 more rows
 
 ``` r
 tail(cac)
 ```
 
-    ## # A tibble: 6 Ã 8
+    ## # A tibble: 6 × 8
     ##   symbol date        open  high   low close    volume adjusted
     ##   <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
     ## 1 ^FCHI  2024-10-31 7384. 7393. 7316. 7350. 103047400    7350.
@@ -115,12 +115,11 @@ published on Yahoo Finance since 2018.
 
 ## 2 Data wrangling
 
-The wrangling (*démêlage* in French) consists in the storage and the
-transformation of the data. “Tidying and transforming are called
-**wrangling**, because getting your data in a form that’s natural to
-work with often feels like a fight” [R for Data
-Science](https://r4ds.had.co.nz/introduction.html) (Grolemund G. and
-Wickham H.).
+The wrangling consists in the storage and the transformation of the
+data. “Tidying and transforming are called **wrangling**, because
+getting your data in a form that’s natural to work with often feels like
+a fight” [R for Data Science](https://r4ds.had.co.nz/introduction.html)
+(Grolemund G. and Wickham H.).
 
 I could need, for the project, monthly returns to model on, for
 instance.
@@ -137,7 +136,7 @@ cac_monthly_returns <- cac %>%
 tail(cac_monthly_returns)
 ```
 
-    ## # A tibble: 6 Ã 2
+    ## # A tibble: 6 × 2
     ##   date       cac.returns
     ##   <date>           <dbl>
     ## 1 2024-06-28   -0.0642  
