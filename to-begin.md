@@ -1,8 +1,8 @@
-Equity portfolio construction and efficient diversification with
-emerging risks as climate risks and inflation
+Equity portfolio construction and efficient diversification with climate
+risks
 ================
 Pierre Clauss
-November 2023
+November 2024
 
 ## Foreword
 
@@ -39,7 +39,7 @@ Here, I will focus on the data step to begin well the project.
 
 ## 1 Data importation
 
-I import the data with the package **tidyquant**.
+I import the data from Yahoo Finance with the package **tidyquant**.
 
 ``` r
 library(tidyquant)
@@ -48,12 +48,12 @@ library(tidyquant)
 (cac <- tq_get(
   "^FCHI",
   from = '1990-03-01',
-  to = "2023-10-30",
+  to = "2024-11-30",
   get = "stock.prices"
 ))
 ```
 
-    ## # A tibble: 8,694 × 8
+    ## # A tibble: 8,957 Ã 8
     ##    symbol date        open  high   low close volume adjusted
     ##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>  <dbl>    <dbl>
     ##  1 ^FCHI  1990-03-01  1836  1838  1827  1832      0     1832
@@ -66,21 +66,21 @@ library(tidyquant)
     ##  8 ^FCHI  1990-03-12  1917  1918  1912  1912      0     1912
     ##  9 ^FCHI  1990-03-13  1924  1924  1924  1924      0     1924
     ## 10 ^FCHI  1990-03-14  1919  1946  1919  1946      0     1946
-    ## # ℹ 8,684 more rows
+    ## # â¹ 8,947 more rows
 
 ``` r
 tail(cac)
 ```
 
-    ## # A tibble: 6 × 8
-    ##   symbol date        open  high   low close   volume adjusted
-    ##   <chr>  <date>     <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-    ## 1 ^FCHI  2023-10-20 6850. 6881. 6816. 6816.        0    6816.
-    ## 2 ^FCHI  2023-10-23 6820. 6856. 6774. 6850. 53038700    6850.
-    ## 3 ^FCHI  2023-10-24 6865. 6909. 6834. 6894. 58807000    6894.
-    ## 4 ^FCHI  2023-10-25 6860. 6927. 6847. 6915. 69113800    6915.
-    ## 5 ^FCHI  2023-10-26 6836. 6915. 6826. 6889. 71582200    6889.
-    ## 6 ^FCHI  2023-10-27 6899. 6899. 6785. 6795. 68755200    6795.
+    ## # A tibble: 6 Ã 8
+    ##   symbol date        open  high   low close    volume adjusted
+    ##   <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+    ## 1 ^FCHI  2024-10-31 7384. 7393. 7316. 7350. 103047400    7350.
+    ## 2 ^FCHI  2024-11-01 7364. 7434. 7358. 7409.  56971200    7409.
+    ## 3 ^FCHI  2024-11-04 7386. 7446. 7372. 7372.  45718400    7372.
+    ## 4 ^FCHI  2024-11-05 7378. 7415. 7350  7407.  47126000    7407.
+    ## 5 ^FCHI  2024-11-06 7444. 7572. 7338. 7370. 108204000    7370.
+    ## 6 ^FCHI  2024-11-07 7373. 7450  7354. 7426.         0    7426.
 
 ``` r
 # plot
@@ -94,6 +94,24 @@ cac %>%
 ```
 
 ![](to-begin_files/figure-gfm/import-1.png)<!-- -->
+
+I will use also economic views to adapt my allocation based on ESG
+ratings. I could assume that the future performance of stocks could be
+influenced by their ESG ratings: a good ESG rating will lead to good
+performance, and a bad one will lead to poor performance. This
+assumption could be challenged: see the academic paper by Pastor,
+Stambaugh, and Taylor [“Dissecting green
+returns”](https://www.nber.org/system/files/working_papers/w28940/w28940.pdf),
+where they show that green stocks do not guarantee outperformance
+compared to brown stocks.
+
+I use [Sustainalytics’ ESG risk
+assessment](https://www.sustainalytics.com/esg-data) to obtain ESG
+ratings. These ratings measure the risk to which a company’s value is
+exposed due to environmental, social and governance issues. They assess
+the risk on an absolute scale from 0 to 100. The lowest score indicates
+that ESG risk is the best managed. They are available since 2014 and
+published on Yahoo Finance since 2018.
 
 ## 2 Data wrangling
 
@@ -119,15 +137,15 @@ cac_monthly_returns <- cac %>%
 tail(cac_monthly_returns)
 ```
 
-    ## # A tibble: 6 × 2
+    ## # A tibble: 6 Ã 2
     ##   date       cac.returns
     ##   <date>           <dbl>
-    ## 1 2023-05-31     -0.0524
-    ## 2 2023-06-30      0.0425
-    ## 3 2023-07-31      0.0132
-    ## 4 2023-08-31     -0.0242
-    ## 5 2023-09-29     -0.0248
-    ## 6 2023-10-27     -0.0476
+    ## 1 2024-06-28   -0.0642  
+    ## 2 2024-07-31    0.00696 
+    ## 3 2024-08-30    0.0132  
+    ## 4 2024-09-30    0.000629
+    ## 5 2024-10-31   -0.0374  
+    ## 6 2024-11-07    0.0102
 
 We can see below, thanks to the package **DataExplorer**, a summary of
 the tidy observed data.
@@ -155,11 +173,11 @@ summary(cac_monthly_returns)
 
     ##       date             cac.returns       
     ##  Min.   :1990-03-30   Min.   :-0.174903  
-    ##  1st Qu.:1998-08-23   1st Qu.:-0.029160  
-    ##  Median :2007-01-14   Median : 0.009383  
-    ##  Mean   :2007-01-14   Mean   : 0.004687  
-    ##  3rd Qu.:2015-06-06   3rd Qu.: 0.038840  
-    ##  Max.   :2023-10-27   Max.   : 0.201189
+    ##  1st Qu.:1998-11-30   1st Qu.:-0.028793  
+    ##  Median :2007-07-31   Median : 0.009409  
+    ##  Mean   :2007-07-30   Mean   : 0.004769  
+    ##  3rd Qu.:2016-03-31   3rd Qu.: 0.037759  
+    ##  Max.   :2024-11-07   Max.   : 0.201189
 
 I can go deeper thanks to distribution graphics: the non-parametric
 (kernel method) estimation of the distribution and QQ-plots.
